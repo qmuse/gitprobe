@@ -16,6 +16,12 @@ Turn any GitHub repository into comprehensive code analysis with interactive cal
 - **Repository Insights**: File structure, function counts, and relationship mapping
 - **LLM-Ready Output**: Structured JSON optimized for AI analysis
 
+## 📸 Preview
+
+![GitProbe Preview](docs/preview.png)
+
+*GitProbe's interactive call graph visualization showing function relationships and code structure analysis*
+
 ## 📚 Requirements
 
 - Python 3.8+
