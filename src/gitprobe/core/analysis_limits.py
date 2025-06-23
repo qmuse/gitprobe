@@ -99,9 +99,9 @@ class AnalysisLimits:
 
     def __init__(
         self,
-        max_nodes_per_file: int = 3000,  # Higher limit per file for large codebases
-        max_time_per_file: float = 15.0,  # More generous time per file
-        max_files_analyzed: int = 999999,  # Effectively unlimited files
+        max_nodes_per_file: int = 3000,
+        max_time_per_file: float = 15.0,
+        max_files_analyzed: int = 999999,
         max_total_time: float = 180.0,
         language: str = "unknown",
     ):
@@ -111,17 +111,14 @@ class AnalysisLimits:
         self.max_total_time = max_total_time
         self.language = language
 
-        # Per-file state
         self.nodes_processed = 0
         self.start_time: Optional[float] = None
         self.limit_reached = False
 
-        # Global state (shared across all files of this language)
         self.files_analyzed = 0
         self.global_start_time: Optional[float] = None
         self.global_limit_reached = False
 
-        # Reference to global tracker
         self.global_tracker = get_global_tracker()
 
     def start_new_file(self) -> bool:
@@ -129,16 +126,13 @@ class AnalysisLimits:
         Start analyzing a new file. Returns True if global limits allow it.
         Resets per-file counters but maintains global state.
         """
-        # Check global tracker first
         if self.global_tracker.should_stop():
             logger.info(f"Skipping {self.language} file - global analysis limits reached")
             return False
 
-        # Initialize global timer on first file
         if self.global_start_time is None:
             self.global_start_time = time.time()
 
-        # Check global limits before starting new file
         if self.files_analyzed >= self.max_files_analyzed:
             logger.info(
                 f"Skipping {self.language} file - reached global file limit: {self.max_files_analyzed}"
@@ -155,7 +149,6 @@ class AnalysisLimits:
                 self.global_limit_reached = True
                 return False
 
-        # Reset per-file counters
         self.nodes_processed = 0
         self.start_time = time.time()
         self.limit_reached = False
@@ -173,7 +166,6 @@ class AnalysisLimits:
 
         self.nodes_processed += 1
 
-        # Check per-file limits
         if self.start_time:
             elapsed = time.time() - self.start_time
             if elapsed >= self.max_time_per_file:
@@ -190,7 +182,6 @@ class AnalysisLimits:
             self.limit_reached = True
             return True
 
-        # Check global limits
         if self.files_analyzed >= self.max_files_analyzed:
             logger.warning(
                 f"{self.language} analysis hit global file limit: {self.max_files_analyzed} files"
@@ -263,13 +254,12 @@ class AnalysisLimits:
         )
 
 
-# Language-specific factory functions for common configurations
 def create_python_limits() -> AnalysisLimits:
     """Create analysis limits optimized for Python files."""
     return AnalysisLimits(
-        max_nodes_per_file=300,  # Much stricter - keep total under 1000
+        max_nodes_per_file=300,
         max_time_per_file=5.0,
-        max_total_time=60.0,  # 1 minute for Python
+        max_total_time=60.0,
         language="python",
     )
 
@@ -277,9 +267,9 @@ def create_python_limits() -> AnalysisLimits:
 def create_javascript_limits() -> AnalysisLimits:
     """Create analysis limits optimized for JavaScript/TypeScript files."""
     return AnalysisLimits(
-        max_nodes_per_file=250,  # Much stricter - keep total under 1000
+        max_nodes_per_file=250,
         max_time_per_file=3.0,
-        max_total_time=45.0,  # 45 seconds for JS
+        max_total_time=45.0,
         language="javascript",
     )
 
@@ -287,9 +277,9 @@ def create_javascript_limits() -> AnalysisLimits:
 def create_go_limits() -> AnalysisLimits:
     """Create analysis limits optimized for Go files."""
     return AnalysisLimits(
-        max_nodes_per_file=200,  # Much stricter - keep total under 1000
+        max_nodes_per_file=200,
         max_time_per_file=3.0,
-        max_total_time=30.0,  # 30 seconds for Go
+        max_total_time=30.0,
         language="go",
     )
 
@@ -297,9 +287,9 @@ def create_go_limits() -> AnalysisLimits:
 def create_rust_limits() -> AnalysisLimits:
     """Create analysis limits optimized for Rust files."""
     return AnalysisLimits(
-        max_nodes_per_file=200,  # Much stricter - keep total under 1000
+        max_nodes_per_file=200,
         max_time_per_file=4.0,
-        max_total_time=30.0,  # 30 seconds for Rust
+        max_total_time=30.0,
         language="rust",
     )
 
@@ -307,8 +297,8 @@ def create_rust_limits() -> AnalysisLimits:
 def create_c_cpp_limits() -> AnalysisLimits:
     """Create analysis limits optimized for C/C++ files."""
     return AnalysisLimits(
-        max_nodes_per_file=200,  # Much stricter - keep total under 1000
+        max_nodes_per_file=200,
         max_time_per_file=4.0,
-        max_total_time=30.0,  # 30 seconds for C/C++
+        max_total_time=30.0,
         language="c_cpp",
     )

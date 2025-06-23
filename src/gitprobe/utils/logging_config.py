@@ -13,5 +13,4 @@ def setup_logging():
     )
 
 
-# You can also get a logger instance to be used across the application
 logger = logging.getLogger("gitprobe")

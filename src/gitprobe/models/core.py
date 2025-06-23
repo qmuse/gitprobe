@@ -15,7 +15,7 @@ class Function(BaseModel):
     is_method: bool = False
     class_name: Optional[str] = None
     code_snippet: Optional[str] = None
-    display_name: Optional[str] = None  # For custom naming in UI
+    display_name: Optional[str] = None
 
     def get_display_name(self) -> str:
         """Get the name to display (custom or original)"""
